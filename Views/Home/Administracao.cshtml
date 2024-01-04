@@ -1,0 +1,56 @@
+﻿@using Microsoft.AspNetCore.Http
+
+@{
+    ViewData["Title"] = "Administração";
+}
+
+@model List<Pessoa>
+
+@{
+    var loginModel = new Login();
+}
+
+
+<section class="text-center p-5 vh-100 overflow-auto">
+    <h2>Painel de Mensagens</h2>
+
+    @if(loginModel.UsuarioAutenticado)
+    {
+        <section class="p-5 vh-100 w-100 d-flex justify-content-center">
+            <form method="post" class="d-flex flex-column w-75 gap-4 align-items-center">
+                <div class="w-25">
+                    <label for="username">Usuário:</label>
+                    <input type="text" name="username" id="username" asp-for="@loginModel.Username"/>
+                </div>
+
+                <div class="w-25">
+                    <label for="username">Senha:</label>
+                    <input type="password" name="password" id="password" asp-for="@loginModel.Password"/>
+                </div>
+
+                <div class="w-100 mt-3">
+                    <button type="submit" class="rounded w-25">Entrar</button>
+                </div>
+            </form>
+        </section>
+    }
+    else
+    {
+        <section class="p-5 border border-2 border-warning">
+            @if(Model.Count > 0){
+                @foreach (var usuario in Model)
+                {
+                    <div class="border border-2 border-success d-flex flex-column gap-2 p-5 text-start">
+                        <div><span class="fw-bold">Nome:</span> @usuario.Nome</div>
+                        <div><span class="fw-bold">Email:</span> @usuario.Email</div>
+                        <div><span class="fw-bold">Mensagem:</span> @usuario.Mensagem</div>
+                    </div>
+                }
+            }else{
+                <h4>Nenhuma mensagem.</h4>
+            }
+        </section>        
+    }
+
+</section>
+
