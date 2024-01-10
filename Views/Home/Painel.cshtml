@@ -1,0 +1,29 @@
+﻿@{
+    ViewData["Title"] = "Painel Administrativo";
+}
+
+@model List<Pessoa>
+
+
+<section class="p-5">
+
+    <h2 class="py-5">Painel de Mensagens</h2>
+
+    @if (Model != null)
+    {
+        @foreach (var usuario in Model)
+        {
+            <div class="border-top border-2 border-success d-flex flex-column gap-2 p-5 text-start">
+                <div><span class="fw-bold">Nome:</span> @usuario.Nome</div>
+                <div><span class="fw-bold">Email:</span> @usuario.Email</div>
+                <div><span class="fw-bold">Mensagem:</span> @usuario.Mensagem</div>
+            </div>
+        }
+    }
+    else
+    {
+        <h4>Nenhuma mensagem.</h4>
+    }
+
+    @Html.ActionLink("Sair", "Logout", "Home")
+</section>       

@@ -34,3 +34,5 @@ C:\Users\igord\Documents\dev\WebApp\bin\Debug\net7.0\System.Text.Json.dll
 C:\Users\igord\Documents\dev\WebApp\bin\Debug\net7.0\runtimes\browser\lib\net7.0\System.Text.Encodings.Web.dll
 C:\Users\igord\Documents\dev\WebApp\obj\Debug\net7.0\WebApp.csproj.AssemblyReference.cache
 C:\Users\igord\Documents\dev\WebApp\obj\Debug\net7.0\WebApp.csproj.CopyComplete
+C:\Users\igord\Documents\dev\WebApp\bin\Debug\net7.0\System.Security.Permissions.dll
+C:\Users\igord\Documents\dev\WebApp\obj\Debug\net7.0\WebApp.sourcelink.json

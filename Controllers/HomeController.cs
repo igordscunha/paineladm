@@ -1,35 +1,24 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Net;
-using System.Net.Http;
-using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text;
 using WebApp.Models;
-using Microsoft.Extensions.Http;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebApp.Controllers
 {
     public class HomeController : Controller
     {
 
-        private readonly ILogger<HomeController> _logger;
-
-        private static List<Pessoa> usuarios = new List<Pessoa>();
-
-
-        public HomeController(ILogger<HomeController> logger)
-        {
-            _logger = logger;
-        }
-
+        private static List<Pessoa> mensagens = new List<Pessoa>();
 
         [HttpPost]
-        public IActionResult EnviarDadosFormulario([FromForm] Pessoa usuario)
+        public IActionResult EnviarDadosFormulario([FromForm] Pessoa pessoa)
         {
-            usuarios.Add(usuario);
+            mensagens.Add(pessoa);
 
-            if (usuarios.Contains(usuario))
+            if (mensagens.Contains(pessoa))
             {
                 return View("Sucesso");
             }
@@ -39,20 +28,42 @@ namespace WebApp.Controllers
             }
         }
 
-        [HttpGet("usuarios")]
-        public IEnumerable<Pessoa> ListarUsuarios()
+        [HttpGet("mensagens"), Authorize]
+        public IEnumerable<Pessoa> ListarMensagens()
         {
-            return usuarios;
-        }
-
-        public IActionResult Administracao()
-        {
-            var usuarios = ListarUsuarios();
-
-            return View(usuarios); //testar usar o 'usuarios' direto do método da classe / campo
+            return mensagens;
         }
 
 
+        [HttpPost, AllowAnonymous]
+        public async Task<IActionResult> Login([FromForm] Login usuario)
+        {
+            var usuarioMaster = new Login()
+            {
+                Username = "Teste123",
+                Password = "Abc123"
+            };
+
+            if(!usuarioMaster.Password.Equals(usuario.Password) || !usuarioMaster.Username.Equals(usuario.Username))
+            {
+                return RedirectToAction("Administracao", new {erroLogin = true});
+            }
+
+            await new Services().Login(HttpContext, usuario);
+            return RedirectToAction("Painel");            
+
+        }
+
+        [Authorize]
+        public async Task<IActionResult> Logout()
+        {
+            await new Services().Logout(HttpContext);
+
+            return RedirectToAction("Administracao");
+        }
+
+
+        [AllowAnonymous]
         public IActionResult Index()
         {
             return View();
@@ -63,11 +74,23 @@ namespace WebApp.Controllers
             return View();
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        public IActionResult Administracao(bool erroLogin)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            if (erroLogin)
+            {
+                ViewBag.Erro = "Usuário e/ou senha incorretos.";
+            }
+            if (HttpContext.User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Painel");
+            }
+            return View();
         }
 
+        [Authorize]
+        public IActionResult Painel()
+        {
+            return View(mensagens);
+        }
     }
 }
